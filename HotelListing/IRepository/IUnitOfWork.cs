@@ -12,6 +12,9 @@ namespace HotelListing.IRepository
 
         IGenericRepository<Hotel> Hotels { get; }
 
+        //new for user
+        //IGenericRepository<Hotel> Hotels { get; }
+
         Task Save(); 
     }
 }

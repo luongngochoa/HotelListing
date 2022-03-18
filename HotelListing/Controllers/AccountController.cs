@@ -2,6 +2,7 @@
 using HotelListing.Data;
 using HotelListing.Models;
 using HotelListing.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -94,6 +95,42 @@ namespace HotelListing.Controllers
             {
                 _logger.LogError(ex, $"Something Went Wrong in the  {nameof(Login)}");
                 return Problem($"Something Went Wrong in the  {nameof(Login)}", statusCode: 500);
+            }
+        }
+
+        // api update role cho user
+        [Authorize(Roles = "Administrator")] //chi co admin moi duoc update role cho user
+        [HttpPut]
+        [Route("update")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+
+        public async Task<IActionResult> UpdateUser([FromBody] UpdateUserDTO userDTO)
+        {
+            //_logger.LogInformation($"Update Attempt for {userDTO.Email} ");
+            if (!ModelState.IsValid)
+            {
+                _logger.LogError($"Invalid UPDATE attempt in {nameof(UpdateUser)}");
+                return BadRequest(ModelState);
+            }
+
+            try
+            {
+                var user = _userManager.Users.FirstOrDefault(q => q.Email == userDTO.Email);
+                await _userManager.AddToRolesAsync(user, new string[] { "Administrator" }); 
+                if (user == null)
+                {
+                    _logger.LogError($"Invalid UPDATE attempt in {nameof(UpdateUser)}");
+                    return BadRequest("Submitted data is invalid");
+                }
+
+                 return NoContent();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Something Went Wrong in the {nameof(UpdateUser)}");
+                return StatusCode(500, "Internal Server Error. Please Try Again Later.");
             }
         }
     }

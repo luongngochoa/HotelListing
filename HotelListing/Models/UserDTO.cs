@@ -27,4 +27,10 @@ namespace HotelListing.Models
 
         public ICollection<string> Roles { get; set; }  
     }
+
+    public class UpdateUserDTO : UserDTO
+    {
+
+    }
+
 }

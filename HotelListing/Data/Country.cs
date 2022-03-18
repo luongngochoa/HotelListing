@@ -13,7 +13,7 @@ namespace HotelListing.Data
         public string Name { get; set; }
 
         public string ShortName { get; set; }
-
+        // phuong thuc ao virtual
         public virtual IList<Hotel> Hotels { get; set; }
     }
 }
